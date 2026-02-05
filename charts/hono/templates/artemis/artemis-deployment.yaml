@@ -68,18 +68,14 @@ spec:
           initialDelaySeconds: {{ $args.componentConfig.probes.livenessProbe.initialDelaySeconds }}
           periodSeconds: {{ $args.componentConfig.probes.livenessProbe.periodSeconds }}
           timeoutSeconds: {{ $args.componentConfig.probes.livenessProbe.timeoutSeconds }}
-          exec:
-            command:
-            - "/bin/bash"
-            - {{ printf "%s/liveness-probe.sh" $args.configMountPath | quote }}
+          tcpSocket:
+            port: 8161
         readinessProbe:
           initialDelaySeconds: {{ $args.componentConfig.probes.readinessProbe.initialDelaySeconds }}
           periodSeconds: {{ $args.componentConfig.probes.readinessProbe.periodSeconds }}
           timeoutSeconds: {{ $args.componentConfig.probes.readinessProbe.timeoutSeconds }}
-          exec:
-            command:
-            - "/bin/bash"
-            - {{ printf "%s/readiness-probe.sh" $args.configMountPath | quote }}
+          tcpSocket:
+            port: 8161
         securityContext:
           privileged: false
         volumeMounts:
