@@ -6,8 +6,8 @@
 
 DITTO_DEVOPS_USER_PW="devops:$(cat /var/run/opentwins/ditto-gw-users/devops-password)"
 DEVICE_REGISTRY_URL_SCHEME="{{- if ( eq .Values.hono.deviceRegistryExample.hono.registry.http.insecurePortEnabled true ) }}http{{ else }}https{{ end }}"
-DEVICE_REGISTRY_PORT=$([ "${DEVICE_REGISTRY_URL_SCHEME}" = "http" ] && echo "28080" || echo "28443")
-DEVICE_REGISTRY_BASE_URL="${DEVICE_REGISTRY_URL_SCHEME}://{{ include "opentwins.hono.fullname" . }}-service-device-registry-ext:${DEVICE_REGISTRY_PORT}/v1"
+DEVICE_REGISTRY_PORT=$([ "${DEVICE_REGISTRY_URL_SCHEME}" = "http" ] && echo "8080" || echo "8443")
+DEVICE_REGISTRY_BASE_URL="${DEVICE_REGISTRY_URL_SCHEME}://{{ include "opentwins.hono.fullname" . }}-service-device-registry:${DEVICE_REGISTRY_PORT}/v1"
 DITTO_CONNECTIONS_BASE_URL="http://{{ include "opentwins.ditto.fullname" . }}-nginx:8080/api/2/connections"
 DITTO_THINGS_BASE_URL="http://{{ include "opentwins.ditto.fullname" . }}-nginx:8080/api/2/things"
 
@@ -48,10 +48,10 @@ add_hono_tenant() {
   # --retry-max-time 300: Tiempo máximo total de 5 minutos
   
   response_body_and_status=$(curl --silent --write-out "\n%{http_code}" -k \
-    --retry 20 \
+    --retry 5 \
     --retry-connrefused \
     --retry-delay 5 \
-    --retry-max-time 300 \
+    --retry-max-time 10 \
     -X POST --header 'Content-Type: application/json' \
     --data-raw "$http_request_body" "$DEVICE_REGISTRY_BASE_URL/tenants/$tenant_id")
     

@@ -341,15 +341,33 @@ hono:
   deviceRegistryExample:
     type: mongodb
     addExampleData: false
+    # Increase memory limits for device registry to prevent OOMKilled
+    resources:
+      requests:
+        cpu: "150m"
+        memory: "400Mi"
+      limits:
+        cpu: "1"
+        memory: "512Mi"
     mongoDBBasedDeviceRegistry:
       mongodb:
         host: '{{ .Release.Name }}-mongodb' # The values are processed via the 'tpl' function here in Eclipse Hono helm, allowing the inclusion of the release name
         port: 27017
         dbName: hono
+      # Increase memory limits for MongoDB based registry
+      resources:
+        requests:
+          cpu: "150m"
+          memory: "400Mi"
+        limits:
+          cpu: "1"
+          memory: "512Mi"
     hono:
       registry:
-          http:
-            insecurePortEnabled: true
+        http:
+          insecurePortEnabled: true
+          insecurePortBindAddress: "0.0.0.0"
+          authenticationRequired: false
   adapters: # This needs to be defined for the Eclipse Hono Helm to work (it seems to be a bug)
     mqtt:
       enabled: true
@@ -402,7 +420,7 @@ extendedAPI:
   allLogs: false
   service:
     port: 8080
-    nodePort: 30526
+    nodePort: 30528
 # ----------------------------------------------
 # If you want to use another instance of Eclipse Ditto or configure it manually
 #
